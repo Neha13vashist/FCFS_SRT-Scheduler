@@ -6,7 +6,7 @@
 
 int itr=1;
 int time_track=0;
-int flag=0;
+//int count=0;
 
 typedef struct Process
 {
@@ -55,22 +55,23 @@ int main()
 
 void scheduling()
 {
+	int count = 0;
 	for(int i=0;i<n;i++)
 	{
 		if(P[i].Burst_Time==0)
 		{
-			flag+=1;
+			count = count+1;
 		}
 	}
-	if(flag==n)
+	if(count==n)
 	{
 		Display();
 	}
 	else
 	{
-		if(itr==1 || itr==2)
+		if(itr==1)
 		{
-			FCFS();
+			FCFS_Algo(&P,n);
 		}
 		else
 		{
@@ -135,19 +136,16 @@ void FCFS_Algo(struct Process *P,int n)
 	scheduling();
 }
 
-void FCFS()
-{
-	FCFS_Algo(&P,n);
-}
 
 void Round_Robin(int p_no)
 {
 	if(itr==1)
 	{
-		if(P[p_no].Burst_Time>3)
+		if(P[p_no].Burst_Time>=9 && P[p_no].Arrival_Time<=time_track)
 		{
-			time_track+=3;
-			P[p_no].Burst_Time = P[p_no].Burst_Time-3;
+			time_track+=9;
+			P[p_no].Burst_Time = P[p_no].Burst_Time-9;
+			
 			if(P[p_no].Burst_Time==0)
 			{
 				P[p_no].Completion_time = time_track;
@@ -155,42 +153,61 @@ void Round_Robin(int p_no)
 		}
 		else
 		{
-			time_track += P[p_no].Burst_Time;
-			P[p_no].Burst_Time = 0;
-			P[p_no].Completion_time = time_track;
+			if(P[p_no].Arrival_Time<=time_track)
+			{
+				time_track = P[p_no].Burst_Time+time_track;
+				P[p_no].Burst_Time = 0;
+				P[p_no].Completion_time = time_track;
+			}
 		}
 	}
 	else
 	{
-		if(P[p_no].Burst_Time>6)
+		if(P[p_no].Burst_Time>=6 && P[p_no].Arrival_Time<=time_track)
 		{
 			time_track+=6;
 			P[p_no].Burst_Time = P[p_no].Burst_Time-6;
+			
+			if(P[p_no].Burst_Time==0)
+			{
+				P[p_no].Completion_time = time_track;
+			}
 		}
 		else
 		{
-			time_track += P[p_no].Burst_Time;
-			P[p_no].Burst_Time = 0;
-			P[p_no].Completion_time = time_track;
+			if(P[p_no].Arrival_Time<=time_track)
+			{
+				time_track = P[p_no].Burst_Time+time_track;
+				P[p_no].Burst_Time = 0;
+				P[p_no].Completion_time = time_track;
+			}
 		}
-	}
-	scheduling();	
+	}	
 }
 
 
 void SRT_Algo()
 {
-	int p_no = 0;
-	int s_rt = 1;
- 	for (int i = 0; i < n; i++)
+	
+	for(int i=0;i<n;i++)
 	{
-      		if (P[i].Burst_Time <= s_rt && P[i].Burst_Time>0) 
+		for(int j=0;j<n;j++)
 		{
-			p_no = i;
-        		s_rt = P[i].Burst_Time;
-      		}
-   	}
-	Round_Robin(p_no);
+			if(P[j].Burst_Time>P[i].Burst_Time)
+			{
+				struct Process t = P[i];
+				P[i] = P[j];
+				P[j] = t;
+			}
+		}
+	}
+	for(int i=0;i<n;i++)
+	{
+		if(P[i].Burst_Time!=0)
+		{Round_Robin(i);}
+		
+	}
+	scheduling();
 }
 
 
@@ -207,6 +224,19 @@ void wt_tt()
 void Display()
 {
 	wt_tt();
+	for(int i=0;i<n;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			if(P[j].Process_Id>P[i].Process_Id)
+			{
+				struct Process t = P[i];
+				P[i] = P[j];
+				P[j] = t;
+			}
+		}
+	}
+	printf("P_Id\tAT\tBT\tWT\tTAT\tCT\n");
 	for(int i=0;i<n;i++)
 	{
 		printf("%d\t%d\t%d\t%d\t%d\t%d\n",P[i].Process_Id,P[i].Arrival_Time,P[i].Burst_Time_Copy,P[i].Waiting_Time,P[i].Turnaround_Time,P[i].Completion_time);
