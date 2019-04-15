@@ -52,7 +52,7 @@ int main()
 
 
 
-
+//schedule when to use which algorithm
 void scheduling()
 {
 	int count = 0;
@@ -87,11 +87,11 @@ void scheduling()
 
 
 
-
+// Getting details for the process
 void Process_info(int a)
 {
 	int i;
-	printf("Enter the arrival time and Burst time for the processes\n");
+	printf("Enter the arrival time and Burst time for the processes\n"); //Taking input for burst time and arrival time
 	for(i=0;i<a;i++)
 	{
 		printf("\tEnter for Process %d :",i);
@@ -110,6 +110,7 @@ void Process_info(int a)
 }
 
 
+//Scheduling using First come first serve
 void FCFS_Algo(struct Process *P,int n)
 {
 	for(int i=0;i<n;i++)
@@ -137,6 +138,8 @@ void FCFS_Algo(struct Process *P,int n)
 }
 
 
+
+//scheduling using round robin
 void Round_Robin(int p_no)
 {
 	if(itr==1)
@@ -186,6 +189,7 @@ void Round_Robin(int p_no)
 }
 
 
+//Shortest remaining job first algorithm
 void SRT_Algo()
 {
 	
@@ -210,7 +214,7 @@ void SRT_Algo()
 	scheduling();
 }
 
-
+//Calculating waiting time and turnaround time
 void wt_tt()
 {
 	for(int i=0;i<n;i++)
@@ -221,9 +225,11 @@ void wt_tt()
 }
 
 
+//Display the final scheduling
 void Display()
 {
 	wt_tt();
+	int avg_wt=0, avg_tat=0;
 	for(int i=0;i<n;i++)
 	{
 		for(int j=0;j<n;j++)
@@ -236,11 +242,14 @@ void Display()
 			}
 		}
 	}
-	printf("P_Id\tAT\tBT\tWT\tTAT\tCT\n");
+	printf("P_Id\tArrival_Time\tBurst_Time\tWaiting_Time\tTurn_Around_Time\tCompletion_Time\n");
 	for(int i=0;i<n;i++)
 	{
-		printf("%d\t%d\t%d\t%d\t%d\t%d\n",P[i].Process_Id,P[i].Arrival_Time,P[i].Burst_Time_Copy,P[i].Waiting_Time,P[i].Turnaround_Time,P[i].Completion_time);
+		printf("%d\t%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n",P[i].Process_Id,P[i].Arrival_Time,P[i].Burst_Time_Copy,P[i].Waiting_Time,P[i].Turnaround_Time,P[i].Completion_time);
+		avg_wt += P[i].Waiting_Time;
+		avg_tat += P[i].Turnaround_Time;
 	}
+	printf("\n\n Average Waiting Time : %d\n Average Turn Around Time : %d",avg_wt/n,avg_tat/n);
 }
 
 
